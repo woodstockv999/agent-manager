@@ -1,0 +1,276 @@
+[
+  {
+    "id": "skill-gate",
+    "name": "Skill Gate Agent",
+    "role": "セキュリティ審査官",
+    "description": "GitHubスキルや任意のSKILL.mdファイルをインストール前にセキュリティ審査する。17カテゴリのパターン検査＋セマンティック評価で0-100のリスクスコアを算出する。",
+    "abilities": [
+      "17カテゴリ脆弱性スキャン（プロンプトインジェクション・データ漏洩・権限昇格等）",
+      "GitHub URL / ローカルパス / テキスト貼り付けに対応",
+      "リスクスコア（0-100）と判定（SAFE/CAUTION/HIGH RISK/CRITICAL）",
+      "発見事項の重大度分類と推奨アクション出力",
+      "セマンティック評価（パターン検査を超えた文脈的リスク）"
+    ],
+    "invoke": "/skill-gate",
+    "skillFile": "/home/w00dst0ck/agents/skill-gate/SKILL.md",
+    "reference": "https://github.com/NVIDIA/SkillSpector",
+    "category": "security",
+    "addedAt": "2026-06-29",
+    "gateExempt": true
+  },
+  {
+    "id": "ui-agent",
+    "name": "UI Agent",
+    "role": "UIデザイン専門家",
+    "description": "Anti-slopフロントエンド設計エージェント。ありきたりなAIデフォルトデザインを避け、ブリーフのコンテキストに合った本物のデザイン言語を選択してUIを設計・実装する。",
+    "abilities": [
+      "ブリーフ推論とデザインリード宣言（ページ種別・オーディエンス・ビブ）",
+      "3ダイアル設定（DESIGN_VARIANCE / MOTION_INTENSITY / VISUAL_DENSITY）",
+      "適切なデザインシステム選択（Tailwind/shadcn/Fluent/Carbon等）",
+      "Anti-slop タイポグラフィ・カラー・スペーシング設計",
+      "アニメーション・モーション設計（prefers-reduced-motion対応）"
+    ],
+    "invoke": "/ui-agent",
+    "skillFile": "/home/w00dst0ck/agents/ui-agent/SKILL.md",
+    "reference": "https://github.com/Leonxlnx/taste-skill",
+    "category": "design",
+    "addedAt": "2026-06-29",
+    "gateExempt": true
+  },
+  {
+    "id": "agent-install",
+    "name": "Agent Install",
+    "role": "エージェント導入エージェント",
+    "description": "GitHubリンクからClaude Codeスキルをセキュリティ審査（skill-gate）してインストール・エージェントダッシュボード登録まで一括実行する。",
+    "abilities": [
+      "GitHub URL からSKILL.mdを自動取得（リポジトリルート・単ファイルURL対応）",
+      "skill-gate を起動してセキュリティ審査（17カテゴリ・リスクスコア0-100）",
+      "SAFE/CAUTION判定時のみインストール（HIGH RISK/CRITICALは拒否）",
+      "エージェントディレクトリ作成・SKILL.md配置・シンボリックリンク作成",
+      "agents.jsonへの自動登録でダッシュボードに即時反映"
+    ],
+    "invoke": "/agent-install",
+    "skillFile": "/home/w00dst0ck/agents/agent-install/SKILL.md",
+    "reference": null,
+    "category": "ops",
+    "addedAt": "2026-06-29",
+    "gateExempt": true
+  },
+  {
+    "id": "distributed-task-orchestrator",
+    "name": "Distributed Task Orchestrator",
+    "role": "タスク分解・並列サブエージェント実行係",
+    "description": "複雑な依頼を独立したアトミックタスクに分解し、依存関係をマッピングして並列実行を管理・結果を集約する。claude-task-master相当の機能をSKILL.md形式で提供。",
+    "abilities": [
+      "タスク分解（依存関係マッピング・master_plan.md生成）",
+      "Agent単位でのタスク割り当て（agent_tasks/agent-XX.md生成）",
+      "シミュレーション実行（デフォルト）またはClaude CLIサブエージェント並列起動（CLIモード）",
+      "DAGベースのバッチスケジューリング・リトライ/エラーハンドリング",
+      "結果集約とfinal_output.md生成"
+    ],
+    "invoke": "/distributed-task-orchestrator",
+    "skillFile": "/home/w00dst0ck/agents/distributed-task-orchestrator/SKILL.md",
+    "reference": "https://github.com/xuzeyu91/ai-agent-toolkit",
+    "category": "dev",
+    "addedAt": "2026-07-01",
+    "gateExempt": false
+  },
+  {
+    "id": "memory-dream",
+    "name": "Memory Dream",
+    "role": "記憶コンソリデーション係",
+    "description": "開発日誌（diaryアプリ）を起点に記憶階層（MEMORY.md / auto-memory）を定期的に再編し、重複・矛盾・陳腐化を除去するconsolidation skill。人間の睡眠中の記憶固定に相当する。",
+    "abilities": [
+      "日記エントリのMine→Consolidate→Dedup→Prune 4フェーズ処理",
+      "diary新規エントリ数によるvolume-gate（しきい値未満は自動スキップ）",
+      "検証可能な矛盾はコード/config照合の上で最新値に自動修正",
+      "cron（毎日4:17 JST）によるheadless claude -p自動実行"
+    ],
+    "invoke": "/memory-dream",
+    "skillFile": "/home/w00dst0ck/agents/memory-dream/SKILL.md",
+    "reference": null,
+    "category": "ops",
+    "addedAt": "2026-07-02",
+    "gateExempt": true
+  },
+  {
+    "id": "crypto-market-search",
+    "name": "Crypto Market Search",
+    "role": "暗号資産マーケットデータ照会",
+    "description": "CoinPaprika MCP経由で12,000以上の暗号資産・350以上の取引所のマーケットデータを検索・分析する。コイン検索、価格・時価総額取得、OHLCV履歴、コントラクトアドレスからの価格照会など。",
+    "abilities": [
+      "コイン名/シンボル/コントラクトアドレスでの検索・価格照会",
+      "OHLCVヒストリカルデータ取得(5m〜24h)",
+      "時価総額・BTCドミナンス等のグローバル市場概況",
+      "APIキー不要(無料枠 月20,000コール)"
+    ],
+    "invoke": "/crypto-market-search",
+    "skillFile": "/home/w00dst0ck/agents/crypto-market-search/SKILL.md",
+    "reference": "https://github.com/coinpaprika/claude-marketplace",
+    "category": "dev",
+    "addedAt": "2026-07-03",
+    "gateExempt": false
+  },
+  {
+    "id": "pre-trade-gate",
+    "name": "Pre-Trade Gate",
+    "role": "発注前リスク検証官",
+    "description": "発注前に9項目(ポートフォリオ熱量・単一ポジションリスク・集中度・レジーム整合・出来高確認・損切り有無・リスクリワード比・リベンジトレード検知・日次損失上限)をPASS/WARN/FAILで判定し、歴史的な大損失事例(SBF・Do Kwon・LTCM等)との類似パターンも警告する。",
+    "abilities": [
+      "9項目のPASS/WARN/FAIL判定と総合PROCEED/CAUTION/DO NOT PROCEED出力",
+      "感情的なリベンジトレードの検知",
+      "過去の著名な破綻事例との類似パターン警告",
+      "純粋なプロンプト型(コード実行・外部通信なし)"
+    ],
+    "invoke": "/pre-trade-gate",
+    "skillFile": "/home/w00dst0ck/agents/pre-trade-gate/SKILL.md",
+    "reference": "https://github.com/VictorVVedtion/trading-skills",
+    "category": "dev",
+    "addedAt": "2026-07-03",
+    "gateExempt": false
+  },
+  {
+    "id": "strategy-pivot-designer",
+    "name": "Strategy Pivot Designer",
+    "role": "戦略ピボット提案官(自己学習フィードバック)",
+    "description": "バックテスト反復が局所最適に陥った(スコア停滞・過学習・手数料負け・裾リスク超過)ことを決定論的スクリプトで検知し、パラメータ調整ではなく構造的に異なる戦略アーキテクチャへのピボット案を生成する。",
+    "abilities": [
+      "4種の停滞トリガー(プラトー・過学習・手数料負け・裾リスク)を検知",
+      "前提逆転・アーキタイプ切替・目的再定義の3手法でピボット案生成",
+      "quality potential + noveltyでランク付けした提案を出力",
+      "reports/配下のJSON/YAML読み書きのみに閉じた安全な実装(ネットワーク通信・shell実行なし)"
+    ],
+    "invoke": "/strategy-pivot-designer",
+    "skillFile": "/home/w00dst0ck/agents/strategy-pivot-designer/SKILL.md",
+    "reference": "https://github.com/tradermonty/claude-trading-skills",
+    "category": "dev",
+    "addedAt": "2026-07-03",
+    "gateExempt": false
+  },
+  {
+    "id": "animation-vocabulary",
+    "name": "Animation Vocabulary",
+    "role": "アニメーション用語逆引き辞典",
+    "description": "曖昧なモーション表現の説明から正確なアニメーション用語を逆引きする用語集。「ポップオーバーが開くときのバウンドするやつ」→ Pop in のように、AIやデザイナーに指示するための正しい語彙を返す。",
+    "abilities": [
+      "曖昧な説明→正確なアニメーション用語の逆引き",
+      "エントランス/イージング/スプリング/ジェスチャー等のカテゴリ別用語集",
+      "AIプロンプトやデザイナー指示に使える語彙の提供",
+      "純粋な参照型（コード実行・外部通信なし）"
+    ],
+    "invoke": "/animation-vocabulary",
+    "skillFile": "/home/w00dst0ck/agents/animation-vocabulary/SKILL.md",
+    "reference": "https://github.com/emilkowalski/skills",
+    "category": "design",
+    "addedAt": "2026-07-10",
+    "gateExempt": false
+  },
+  {
+    "id": "apple-design",
+    "name": "Apple Design",
+    "role": "Apple流UI・モーション設計指南",
+    "description": "AppleのインターフェースデザインとフルイドなフィジカルモーションをWeb向けに翻訳したリファレンス。ジェスチャー駆動UI・スプリングアニメーション・シート/ドラッグ操作・半透明マテリアル・タイポグラフィの設計指針を提供する。",
+    "abilities": [
+      "スプリング・ラバーバンド・慣性など物理ベースモーションの実装パターン",
+      "ジェスチャー駆動UI（ドラッグ/スワイプ/シート）の設計指針",
+      "半透明マテリアル・深度・タイポグラフィ（optical sizing等）",
+      "reduced-motion対応とフィードバック/空間的一貫性の設計原則"
+    ],
+    "invoke": "/apple-design",
+    "skillFile": "/home/w00dst0ck/agents/apple-design/SKILL.md",
+    "reference": "https://github.com/emilkowalski/skills",
+    "category": "design",
+    "addedAt": "2026-07-10",
+    "gateExempt": false
+  },
+  {
+    "id": "emil-design-eng",
+    "name": "Emil Design Eng",
+    "role": "デザインエンジニアリング哲学",
+    "description": "Emil Kowalski（vaul/sonner作者）のUIポリッシュ・コンポーネント設計・アニメーション判断の哲学をエンコードしたスキル。ソフトウェアを「気持ちよく」感じさせる不可視のディテールを扱う。",
+    "abilities": [
+      "アニメーションの要否判断フレームワーク",
+      "イージング・デュレーション・スプリング設定の具体値テーブル",
+      "コンポーネント設計パターンとUIポリッシュの原則",
+      "パフォーマンス・アクセシビリティ配慮のレビュー観点"
+    ],
+    "invoke": "/emil-design-eng",
+    "skillFile": "/home/w00dst0ck/agents/emil-design-eng/SKILL.md",
+    "reference": "https://github.com/emilkowalski/skills",
+    "category": "design",
+    "addedAt": "2026-07-10",
+    "gateExempt": false
+  },
+  {
+    "id": "review-animations",
+    "name": "Review Animations",
+    "role": "アニメーションコードレビュー官",
+    "description": "モーション/アニメーションコードをEmil Kowalskiの高い craft 基準でレビューする専用スキル。デフォルトはフラグ付け、承認は勝ち取るもの。10の非交渉スタンダードとBlock/Approve判定を出力する。",
+    "abilities": [
+      "10の非交渉スタンダード（STANDARDS.md）に基づく静的レビュー",
+      "所見テーブル＋段階的Block/Approve判定の出力",
+      "エスカレーショントリガーと修正ヒエラルキーの提示",
+      "モーションコード専用（機能追加・無関係バグ修正はしない）"
+    ],
+    "invoke": "/review-animations",
+    "skillFile": "/home/w00dst0ck/agents/review-animations/SKILL.md",
+    "reference": "https://github.com/emilkowalski/skills",
+    "category": "design",
+    "addedAt": "2026-07-10",
+    "gateExempt": false
+  },
+  {
+    "id": "cbt-analyzer",
+    "name": "CBT Analyzer",
+    "role": "トレード分析官",
+    "description": "バックテスト結果・実トレードを深掘り分析する。勝ち/負けトレードの分類、時間帯・レジーム別パフォーマンス評価、テスト可能な改善提案のみを生成する。",
+    "abilities": [
+      "勝ち/負けトレードのパターン分類(outcome/size/duration/exit種別)",
+      "時間帯・曜日・レジーム別パフォーマンス分析",
+      "損失クラスタリング・ドローダウン特性の評価",
+      "「具体的・テスト可能・データ根拠」を満たす改善提案のみ許可"
+    ],
+    "invoke": "/cbt-analyzer",
+    "skillFile": "/home/w00dst0ck/agents/cbt-analyzer/SKILL.md",
+    "reference": "https://github.com/Trade-With-Claude/cbt-framework",
+    "category": "dev",
+    "addedAt": "2026-07-11",
+    "gateExempt": false
+  },
+  {
+    "id": "cbt-eda",
+    "name": "CBT EDA",
+    "role": "データ統計検定官",
+    "description": "トレードデータの探索的データ分析(EDA)を行う。定常性・正規性・自己相関の統計検定と金融データ特有の解釈フレームを持つ。",
+    "abilities": [
+      "定常性検定(ADF/KPSS)・正規性検定(Shapiro-Wilk/Jarque-Bera)",
+      "自己相関検定(Ljung-Box/Durbin-Watson)・相関分析(Pearson/Spearman)",
+      "分布分析(歪度/尖度/ファットテール)と季節性検出",
+      "データ品質検査とSeaborn可視化"
+    ],
+    "invoke": "/cbt-eda",
+    "skillFile": "/home/w00dst0ck/agents/cbt-eda/SKILL.md",
+    "reference": "https://github.com/Trade-With-Claude/cbt-framework",
+    "category": "dev",
+    "addedAt": "2026-07-11",
+    "gateExempt": false
+  },
+  {
+    "id": "cbt-researcher",
+    "name": "CBT Researcher",
+    "role": "戦略仮説調査官",
+    "description": "トレード戦略仮説の理論的裏付けをWeb調査で検証する。エッジの実在性・減衰・レジーム依存性を評価し、過学習/執行/データ/市場/構造リスクを分類する。",
+    "abilities": [
+      "学術論文(arXiv/SSRN)・実装事例(GitHub/QuantConnect)の調査",
+      "エッジ検証(文献裏付け・裁定消滅・レジーム依存性)",
+      "リスク分類(過学習/執行/データ/市場/構造)",
+      "出典URL必須・エッジ減衰を正直に報告"
+    ],
+    "invoke": "/cbt-researcher",
+    "skillFile": "/home/w00dst0ck/agents/cbt-researcher/SKILL.md",
+    "reference": "https://github.com/Trade-With-Claude/cbt-framework",
+    "category": "dev",
+    "addedAt": "2026-07-11",
+    "gateExempt": false
+  }
+]

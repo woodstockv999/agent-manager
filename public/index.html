@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CREW — エージェント管理</title>
+  <base href="/agents/"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:       #08090c;
+      --surface:  #0f1116;
+      --card:     #12141c;
+      --border:   #1c1f2e;
+      --border2:  #252838;
+      --text:     #dde0f0;
+      --muted:    #858ab0;
+      --dim:      #515573;
+      --accent:   #d4a030;
+      --accent-l: rgba(212,160,48,.1);
+      --accent-b: rgba(212,160,48,.22);
+      --yellow:   #e8b840;
+      --coral:    #e06858;
+      --blue:     #5090e8;
+      --green:    #38c078;
+      --purple:   #8870e0;
+      --purple-l: rgba(136,112,224,.1);
+      --purple-b: rgba(136,112,224,.22);
+      --r: 12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+
+    /* ── 階層パンくず（このアプリが「ポータル → CREW → セクション」の
+         どこにいるかを常に示す。タブ切り替えではなく、現在地の表示）── */
+    .crumb-bar {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; gap: 6px;
+      padding: 14px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      font-size: .82rem;
+      flex-wrap: wrap;
+    }
+    .crumb {
+      display: flex; align-items: center; gap: 6px;
+      color: var(--muted); text-decoration: none;
+      padding: 4px 8px; border-radius: 7px;
+      transition: background .12s, color .12s;
+      background: none; border: none; font: inherit; cursor: pointer;
+    }
+    .crumb:hover { background: var(--card); color: var(--text); }
+    .crumb.current { color: var(--text); font-weight: 600; cursor: default; }
+    .crumb.current:hover { background: none; }
+    .crumb-sep { color: var(--dim); font-size: .75rem; }
+    .crumb-spacer { flex: 1; }
+    .crumb-updated {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .65rem; color: var(--dim);
+    }
+
+    .main { max-width: 980px; margin: 0 auto; padding: 32px 24px 60px; }
+
+    .view { display: none; }
+    .view.active { display: block; animation: rise .35s cubic-bezier(.16,1,.3,1) both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .view.active { animation: none; } }
+
+    /* ── ホーム ── */
+    .home-hero { margin-bottom: 28px; }
+    .home-hero h1 { font-size: 1.55rem; font-weight: 700; letter-spacing: -.02em; }
+    .home-hero p  { font-size: .85rem; color: var(--muted); margin-top: 6px; max-width: 56ch; line-height: 1.7; }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .stat-chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px 18px;
+    }
+    .sc-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: .07em;
+      color: var(--dim); margin-bottom: 8px;
+    }
+    .sc-val {
+      font-size: 1.6rem; font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent); line-height: 1;
+    }
+    .sc-sub { font-size: .7rem; color: var(--dim); margin-top: 6px; }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .6rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: .09em;
+      color: var(--dim); margin-bottom: 10px;
+    }
+
+    /* セクションカード（ポータルのカード一覧と同じ言語で統一 ＝ 直感的に分かる） */
+    .section-grid { display: flex; flex-direction: column; gap: 10px; }
+    .section-card {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 18px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: border-color .18s, transform .12s, box-shadow .18s;
+      text-align: left; font: inherit; color: inherit; width: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .section-card:hover {
+      border-color: var(--c);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--c) 35%, transparent), 0 6px 28px color-mix(in srgb, var(--c) 10%, transparent);
+      transform: translateY(-1px);
+    }
+    .section-card:active { transform: scale(.99); }
+    .sec-icon {
+      width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      background: var(--c-l); border: 1px solid var(--c-b);
+    }
+    .sec-body { flex: 1; min-width: 0; }
+    .sec-title { font-size: .95rem; font-weight: 600; }
+    .sec-desc  { font-size: .76rem; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+    .sec-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem; color: var(--dim);
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 3px 10px; border-radius: 99px; white-space: nowrap; flex-shrink: 0;
+    }
+    .sec-chevron { color: var(--dim); flex-shrink: 0; }
+
+    /* ── セクション共通: ページ見出し＋やさしい説明ボックス ── */
+    .page-hd { margin-bottom: 18px; }
+    .page-hd h2 { font-size: 1.2rem; font-weight: 700; letter-spacing: -.015em; }
+    .info-box {
+      display: flex; gap: 10px; align-items: flex-start;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      font-size: .78rem; color: var(--muted); line-height: 1.7;
+    }
+    .info-box .ico { flex-shrink: 0; font-size: 1rem; }
+
+    /* Overview table-ish list kept for agents/plugins lists */
+    .agents-list, .plugins-list { display: flex; flex-direction: column; gap: 12px; }
+    .agent-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid transparent;
+      border-radius: var(--r);
+      overflow: hidden;
+      transition: border-color .15s;
+    }
+    .agent-card:hover { border-color: var(--border2); }
+
+    .ac-head {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px;
+    }
+    .ac-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; flex-shrink: 0;
+    }
+    .ac-title { flex: 1; min-width: 0; }
+    .ac-name { font-size: .95rem; font-weight: 600; }
+    .ac-role { font-size: .73rem; color: var(--muted); margin-top: 1px; }
+    .ac-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .exec-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 99px; padding: 3px 10px;
+      font-size: .72rem;
+    }
+    .exec-pill .num { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--green); }
+    .exec-pill .lbl { color: var(--dim); }
+
+    .ac-body {
+      padding: 0 20px 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+    .ac-section-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .58rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: var(--dim); margin-bottom: 7px;
+    }
+    .ac-desc { font-size: .8rem; color: var(--muted); line-height: 1.65; }
+    .ability-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .ability-tag {
+      font-size: .7rem; color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2px 8px; border-radius: 6px;
+      line-height: 1.5;
+    }
+
+    .ac-foot {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,.015);
+      border-top: 1px solid var(--border);
+    }
+    .skill-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .65rem; color: var(--dim);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      flex: 1; min-width: 0;
+    }
+    .ac-foot-actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
+    .invoke-tag {
+      font-family: 'JetBrains Mono', monospace; font-size: .7rem;
+      background: var(--accent-l);
+      border: 1px solid var(--accent-b);
+      color: var(--accent); padding: 3px 10px; border-radius: 6px;
+      white-space: nowrap;
+    }
+    .invoke-tag.plugin { background: var(--purple-l); border-color: var(--purple-b); color: var(--purple); }
+    .btn-sm {
+      font-size: .7rem; font-weight: 500; padding: 4px 10px;
+      border-radius: 6px; cursor: pointer; transition: .12s;
+      border: 1px solid var(--border2); background: var(--surface);
+      color: var(--muted); font-family: inherit;
+    }
+    .btn-sm:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-l); }
+    .btn-sm.active { border-color: var(--accent); color: var(--accent); background: var(--accent-l); }
+    .ref-link {
+      font-size: .7rem; color: var(--dim); text-decoration: none;
+      display: flex; align-items: center; gap: 4px;
+      transition: color .12s;
+    }
+    .ref-link:hover { color: var(--muted); }
+
+    .skill-panel { display: none; border-top: 1px solid var(--border); }
+    .skill-panel.open { display: block; }
+    .skill-panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-panel-head span { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--muted); }
+    .skill-close { background: none; border: none; color: var(--dim); cursor: pointer; font-size: .9rem; padding: 0 4px; line-height: 1; }
+    .skill-close:hover { color: var(--text); }
+    .skill-content {
+      padding: 18px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem; line-height: 1.75; color: var(--muted);
+      white-space: pre-wrap; max-height: 380px; overflow-y: auto;
+    }
+
+    /* Loading / error */
+    .placeholder { text-align: center; padding: 56px 20px; color: var(--dim); font-size: .8rem; }
+    .spin {
+      display: inline-block; width: 20px; height: 20px;
+      border: 2px solid var(--border2); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin .7s linear infinite;
+      margin-bottom: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-msg { color: var(--coral); font-size: .8rem; text-align: center; padding: 40px; }
+
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+    .crumb, .btn-sm, .skill-close, .section-card { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+    @media (max-width: 800px) {
+      .main { padding: 24px 16px 48px; }
+      .crumb-bar { padding: 12px 16px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .ac-body { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 540px) {
+      .home-hero h1 { font-size: 1.3rem; }
+      .stats-row { gap: 8px; }
+      .stat-chip { padding: 12px 14px; }
+      .sc-val { font-size: 1.3rem; }
+      .sec-icon { width: 40px; height: 40px; font-size: 1.25rem; }
+      .sec-count { display: none; }
+      .ac-head { padding: 14px 16px; gap: 10px; }
+      .ac-icon { width: 34px; height: 34px; font-size: 1rem; }
+      .ac-name { font-size: .88rem; }
+      .ac-meta { flex-wrap: wrap; gap: 5px; justify-content: flex-end; }
+      .ac-body { padding: 12px 16px 14px; gap: 12px; }
+      .ac-foot { flex-wrap: wrap; row-gap: 8px; padding: 10px 16px; }
+      .skill-path { display: none; }
+      .ac-foot-actions { flex-wrap: wrap; width: 100%; justify-content: flex-end; gap: 6px; }
+      .skill-content { font-size: .65rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 階層パンくず: ポータル › CREW › 現在地（タブではなく「今どこにいるか」を示す） -->
+  <div class="crumb-bar">
+    <a class="crumb" href="/" title="アプリ一覧へ戻る">🏠 ポータル</a>
+    <span class="crumb-sep">›</span>
+    <span class="crumb" style="cursor:default; pointer-events:none">🤖 CREW</span>
+    <span class="crumb-sep" id="crumb-sep-2" style="display:none">›</span>
+    <span class="crumb current" id="crumb-current" style="display:none"></span>
+    <span class="crumb-spacer"></span>
+    <span class="crumb-updated" id="footer-updated">—</span>
+  </div>
+
+  <main class="main">
+
+    <!-- ホーム -->
+    <div class="view" id="view-home">
+
+      <div class="home-hero">
+        <h1>CREW — エージェント管理</h1>
+        <p>このページは、Claude（AI）が使える「自動でこなせる作業（エージェント／プラグイン）」を、専門知識がなくても分かるようにまとめたものです。下のカードから見たい項目を選んでください。サーバー本体の稼働状況は BASE で見られます。</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-chip">
+          <div class="sc-label">エージェント数</div>
+          <div class="sc-val" id="s-count"><span class="spin"></span></div>
+          <div class="sc-sub">登録済みの作業テンプレート</div>
+        </div>
+        <div class="stat-chip">
+          <div class="sc-label">プラグイン数</div>
+          <div class="sc-val" id="s-plugin-count" style="color:var(--purple)">—</div>
+          <div class="sc-sub">追加機能（公式拡張）</div>
+        </div>
+        <div class="stat-chip">
+          <div class="sc-label">累計実行回数</div>
+          <div class="sc-val" id="s-total">—</div>
+          <div class="sc-sub">これまで使われた合計回数</div>
+        </div>
+        <div class="stat-chip">
+          <div class="sc-label">最もよく使われたもの</div>
+          <div class="sc-val" id="s-top" style="font-size:.95rem;line-height:1.5">—</div>
+          <div class="sc-sub" id="s-top-sub"></div>
+        </div>
+      </div>
+
+      <div class="section-label">メニュー</div>
+      <div class="section-grid" id="section-grid"></div>
+    </div>
+
+    <!-- エージェント -->
+    <div class="view" id="view-agents">
+      <div class="page-hd"><h2>エージェント一覧</h2></div>
+      <div class="info-box">
+        <span class="ico">💡</span>
+        <span>「エージェント」とは、Claudeに頼める作業のテンプレートです。たとえば「このコードは安全か審査して」のような決まった手順を、毎回説明し直さなくても <code>/コマンド名</code> を打つだけで実行できます。導入前には自動でセキュリティ審査を行っています。</span>
+      </div>
+      <div class="agents-list" id="agents-list">
+        <div class="placeholder"><div class="spin"></div><br>読み込み中...</div>
+      </div>
+    </div>
+
+    <!-- プラグイン -->
+    <div class="view" id="view-plugins">
+      <div class="page-hd"><h2>プラグイン一覧</h2></div>
+      <div class="info-box">
+        <span class="ico">💡</span>
+        <span>「プラグイン」は、Anthropic公式などが配布している追加機能です。エージェントと同じように <code>/コマンド名</code> で呼び出せますが、こちらは自分で作ったものではなく、外部から取り込んだ拡張機能を指します。</span>
+      </div>
+      <div class="plugins-list" id="plugins-list">
+        <div class="placeholder"><div class="spin"></div><br>読み込み中...</div>
+      </div>
+    </div>
+
+  </main>
+
+<script>
+const SECTIONS = [
+  { id:'agents',  emoji:'🤖', color:'#d4a030', cv:'--accent', title:'エージェント', desc:'Claudeが自動でこなせる作業の一覧' },
+  { id:'plugins', emoji:'🧩', color:'#8870e0', cv:'--purple', title:'プラグイン',   desc:'公式などが配布する追加機能' },
+];
+const SECTION_BY_ID = Object.fromEntries(SECTIONS.map(s => [s.id, s]));
+
+const CAT = {
+  security: { label: 'SECURITY', color: '#e8b840', bg: 'rgba(232,184,64,.1)',  border: 'rgba(232,184,64,.22)',  icon: '🛡' },
+  design:   { label: 'DESIGN',   color: '#e06858', bg: 'rgba(224,104,88,.1)',  border: 'rgba(224,104,88,.22)',  icon: '✦' },
+  ops:      { label: 'OPS',      color: '#5090e8', bg: 'rgba(80,144,232,.1)',  border: 'rgba(80,144,232,.22)',  icon: '⚙' },
+  dev:      { label: 'DEV',      color: '#38c078', bg: 'rgba(56,192,120,.1)',  border: 'rgba(56,192,120,.22)',  icon: '🔧' },
+};
+const DEFAULT_CAT = { label: 'OTHER', color: '#858ab0', bg: 'rgba(133,138,176,.1)', border: 'rgba(133,138,176,.22)', icon: '◉' };
+function cat(a) { return CAT[a.category] || DEFAULT_CAT; }
+
+let agents = [], plugins = [], statsLoaded = false;
+const loaded = { agents: false, plugins: false };
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ── ルーティング（ハッシュ） ── */
+function navigate(route) { location.hash = route ? '#' + route : ''; }
+
+function renderCrumb(route) {
+  const sep = document.getElementById('crumb-sep-2');
+  const cur = document.getElementById('crumb-current');
+  if (!route) { sep.style.display = 'none'; cur.style.display = 'none'; return; }
+  const s = SECTION_BY_ID[route];
+  sep.style.display = '';
+  cur.style.display = '';
+  cur.textContent = s ? (s.emoji + ' ' + s.title) : route;
+}
+
+function handleRoute() {
+  const route = location.hash.replace(/^#/, '');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById('view-' + (route || 'home'));
+  (target || document.getElementById('view-home')).classList.add('active');
+  renderCrumb(route);
+
+  if (!statsLoaded) loadStats();
+  if (route === 'agents'  && !loaded.agents)  loadAgentsAndPlugins();
+  if (route === 'plugins' && !loaded.plugins) loadAgentsAndPlugins();
+}
+window.addEventListener('hashchange', handleRoute);
+
+/* ── ホーム ── */
+function renderSectionGrid() {
+  document.getElementById('section-grid').innerHTML = SECTIONS.map(s => `
+    <button class="section-card" style="--c:${s.color};--c-l:${s.color}1a;--c-b:${s.color}38" onclick="navigate('${s.id}')">
+      <div class="sec-icon">${s.emoji}</div>
+      <div class="sec-body">
+        <div class="sec-title">${s.title}</div>
+        <div class="sec-desc">${s.desc}</div>
+      </div>
+      <svg class="sec-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none">
+        <path d="M1 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>`).join('');
+}
+renderSectionGrid();
+
+async function loadStats() {
+  if (statsLoaded) return;
+  try {
+    const r = await fetch('api/stats');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    document.getElementById('s-count').textContent        = d.agentCount;
+    document.getElementById('s-plugin-count').textContent = d.pluginCount;
+    document.getElementById('s-total').textContent        = d.totalExecutions;
+    if (d.topAgent) {
+      document.getElementById('s-top').textContent     = d.topAgent.name;
+      document.getElementById('s-top-sub').textContent = d.topAgent.count + ' 回実行';
+    } else {
+      document.getElementById('s-top').textContent = 'まだ実行なし';
+    }
+    if (d.lastUpdated) {
+      const dt = new Date(d.lastUpdated);
+      document.getElementById('footer-updated').textContent =
+        '更新: ' + dt.toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
+    }
+    statsLoaded = true;
+  } catch (e) {
+    document.getElementById('s-count').textContent = '!';
+  }
+}
+
+/* ── エージェント / プラグイン ── */
+function renderCard(a) {
+  const c = cat(a);
+  return `
+<div class="agent-card" id="card-${a.id}" style="border-left-color:${c.color}">
+  <div class="ac-head">
+    <div class="ac-icon" style="background:${c.bg}">${c.icon}</div>
+    <div class="ac-title">
+      <div class="ac-name">${escapeHtml(a.name)}</div>
+      <div class="ac-role">${escapeHtml(a.role)}</div>
+    </div>
+    <div class="ac-meta">
+      <span class="cat-badge" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;font-weight:500;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em;color:${c.color};background:${c.bg};border:1px solid ${c.border}">${c.label}</span>
+      <div class="exec-pill"><span class="num">${a.executions}</span><span class="lbl">回</span></div>
+    </div>
+  </div>
+  <div class="ac-body">
+    <div>
+      <div class="ac-section-lbl">概要</div>
+      <p class="ac-desc">${escapeHtml(a.description)}</p>
+    </div>
+    <div>
+      <div class="ac-section-lbl">能力</div>
+      <div class="ability-tags">${a.abilities.map(ab => `<span class="ability-tag">${escapeHtml(ab)}</span>`).join('')}</div>
+    </div>
+  </div>
+  <div class="ac-foot">
+    <div class="skill-path"><span style="color:var(--muted)">~</span>${escapeHtml(a.skillFile.replace('/home/w00dst0ck', ''))}</div>
+    <div class="ac-foot-actions">
+      ${a.reference ? `<a class="ref-link" href="${escapeHtml(a.reference)}" target="_blank" rel="noopener">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>参照元</a>` : ''}
+      <code class="invoke-tag">${a.invoke}</code>
+      <button class="btn-sm" id="skill-btn-${a.id}" onclick="toggleSkill('${a.id}')">SKILL.md</button>
+    </div>
+  </div>
+  <div class="skill-panel" id="skill-panel-${a.id}">
+    <div class="skill-panel-head"><span>${escapeHtml(a.skillFile)}</span><button class="skill-close" onclick="toggleSkill('${a.id}')">✕</button></div>
+    <pre class="skill-content" id="skill-content-${a.id}">読み込み中...</pre>
+  </div>
+</div>`;
+}
+
+function renderPluginCard(p) {
+  const c = cat(p);
+  return `
+<div class="agent-card" style="border-left-color:var(--purple)">
+  <div class="ac-head">
+    <div class="ac-icon" style="background:var(--purple-l)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2">
+        <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/>
+      </svg>
+    </div>
+    <div class="ac-title">
+      <div class="ac-name">${escapeHtml(p.name)}</div>
+      <div class="ac-role">${escapeHtml(p.role)}</div>
+    </div>
+    <div class="ac-meta">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.56rem;font-weight:600;padding:2px 7px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em;color:var(--purple);background:var(--purple-l);border:1px solid var(--purple-b)">PLUGIN</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;font-weight:500;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em;color:${c.color};background:${c.bg};border:1px solid ${c.border}">${c.label}</span>
+      <div class="exec-pill"><span class="num">${p.executions}</span><span class="lbl">回</span></div>
+    </div>
+  </div>
+  <div class="ac-body">
+    <div>
+      <div class="ac-section-lbl">概要</div>
+      <p class="ac-desc">${escapeHtml(p.description)}</p>
+    </div>
+    <div>
+      <div class="ac-section-lbl">能力</div>
+      <div class="ability-tags">${p.abilities.map(ab => `<span class="ability-tag">${escapeHtml(ab)}</span>`).join('')}</div>
+    </div>
+  </div>
+  <div class="ac-foot">
+    <div class="skill-path" style="color:var(--purple);opacity:.7">${escapeHtml(p.pluginId)}</div>
+    <div class="ac-foot-actions">
+      ${p.reference ? `<a class="ref-link" href="${escapeHtml(p.reference)}" target="_blank" rel="noopener">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>参照元</a>` : ''}
+      <code class="invoke-tag plugin">${p.invoke}</code>
+    </div>
+  </div>
+</div>`;
+}
+
+async function toggleSkill(id) {
+  const panel = document.getElementById('skill-panel-' + id);
+  const btn   = document.getElementById('skill-btn-' + id);
+  const isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.skill-panel.open').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.btn-sm.active').forEach(b => b.classList.remove('active'));
+  if (isOpen) return;
+  panel.classList.add('open');
+  btn.classList.add('active');
+  const content = document.getElementById('skill-content-' + id);
+  if (content.dataset.loaded) return;
+  try {
+    const r = await fetch('api/skill/' + id);
+    if (!r.ok) throw new Error(r.status);
+    content.textContent = await r.text();
+    content.dataset.loaded = '1';
+  } catch {
+    content.textContent = 'スキルファイルの読み込みに失敗しました。';
+  }
+}
+
+async function loadAgentsAndPlugins() {
+  try {
+    const [agentRes, pluginRes] = await Promise.all([fetch('api/agents'), fetch('api/plugins')]);
+    if (!agentRes.ok)  throw new Error('agents: HTTP ' + agentRes.status);
+    if (!pluginRes.ok) throw new Error('plugins: HTTP ' + pluginRes.status);
+    const agentData  = await agentRes.json();
+    const pluginData = await pluginRes.json();
+    agents  = agentData.agents   || [];
+    plugins = pluginData.plugins || [];
+
+    document.getElementById('agents-list').innerHTML =
+      agents.length ? agents.map(renderCard).join('') : '<div class="placeholder">エージェントなし</div>';
+    document.getElementById('plugins-list').innerHTML =
+      plugins.length ? plugins.map(renderPluginCard).join('') : '<div class="placeholder">プラグインなし</div>';
+
+    loaded.agents = true; loaded.plugins = true;
+  } catch (e) {
+    const msg = `<div class="error-msg">データ取得に失敗しました。<br><small>${escapeHtml(e.message)}</small></div>`;
+    document.getElementById('agents-list').innerHTML  = msg;
+    document.getElementById('plugins-list').innerHTML = msg;
+  }
+}
+
+handleRoute();
+</script>
+</body>
+</html>

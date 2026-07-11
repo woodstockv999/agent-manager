@@ -1,0 +1,18 @@
+[
+  {
+    "id": "frontend-design",
+    "pluginId": "frontend-design@claude-plugins-official",
+    "name": "Frontend Design",
+    "role": "UIデザインガイド",
+    "description": "新しいUIの構築や既存UIのリデザイン時に、特徴的で意図的なビジュアルデザインを提供する。タイポグラフィ・美的方向性の指針から、テンプレート的なデフォルトを避けるための選択支援まで担う。",
+    "abilities": [
+      "ビジュアルデザインの美的方向性ガイダンス",
+      "タイポグラフィ・カラー・スペーシング設計支援",
+      "AI紫グラデ・中央Hero等のありきたりパターン回避"
+    ],
+    "invoke": "/frontend-design",
+    "reference": null,
+    "category": "design",
+    "addedAt": "2026-06-29"
+  }
+]

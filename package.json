@@ -1,0 +1,13 @@
+{
+  "name": "agent-manager",
+  "version": "1.0.0",
+  "description": "CREW — Claude Code エージェント管理（agent-dashboard から切り出し）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
