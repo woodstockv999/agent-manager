@@ -8,6 +8,7 @@ const PORT = 3010;
 const AGENTS_FILE  = path.join(__dirname, 'agents.json');
 const PLUGINS_FILE = path.join(__dirname, 'plugins.json');
 const COUNTS_FILE  = path.join(__dirname, 'execution-counts.json');
+const EXEC_FILE    = path.join(__dirname, 'executions.jsonl');
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public'), {
@@ -70,11 +71,89 @@ app.post('/api/track', (req, res) => {
   if (!known) return res.status(400).json({ error: 'unknown agent id' });
 
   withWriteLock(() => {
+    const now = new Date().toISOString();
     const counts = readJSON(COUNTS_FILE) || {};
     counts[agentId] = (counts[agentId] || 0) + 1;
-    counts.lastUpdated = new Date().toISOString();
+    counts.lastUpdated = now;
     writeJSON(COUNTS_FILE, counts);
+    // 追記オンリーの時系列ログ(グラフ用)。カウンタとは独立に per-event で残す。
+    try { fs.appendFileSync(EXEC_FILE, JSON.stringify({ id: agentId, ts: now }) + '\n'); } catch {}
     res.json({ success: true, agent: agentId, count: counts[agentId] });
+  });
+});
+
+/* ── 時系列(グラフ用) ──
+   executions.jsonl を都度読み込み、JST 基準で日次・曜日×時間帯に集計する。
+   データ量が小さいためキャッシュは持たない。 */
+const JST_DATE = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit',
+});
+const JST_HW = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'Asia/Tokyo', weekday: 'short', hour: '2-digit', hour12: false,
+});
+const WD = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 };
+
+function readEvents() {
+  let raw = '';
+  try { raw = fs.readFileSync(EXEC_FILE, 'utf8'); } catch { return []; }
+  const out = [];
+  for (const line of raw.split('\n')) {
+    const s = line.trim();
+    if (!s) continue;
+    try {
+      const e = JSON.parse(s);
+      if (e && e.id && e.ts) out.push(e);
+    } catch {}
+  }
+  return out;
+}
+
+app.get('/api/timeseries', (req, res) => {
+  const DAYS = 60;
+  const events = readEvents();
+
+  const perDay = {};            // date -> { total, byId:{} }
+  const perId  = {};            // id   -> { total, lastUsed }
+  const heatmap = Array.from({ length: 7 }, () => new Array(24).fill(0));
+
+  for (const e of events) {
+    const d = new Date(e.ts);
+    if (isNaN(d)) continue;
+    const date = JST_DATE.format(d);              // YYYY-MM-DD (JST)
+    (perDay[date] || (perDay[date] = { total: 0, byId: {} }));
+    perDay[date].total++;
+    perDay[date].byId[e.id] = (perDay[date].byId[e.id] || 0) + 1;
+
+    const p = perId[e.id] || (perId[e.id] = { total: 0, lastUsed: null });
+    p.total++;
+    if (!p.lastUsed || e.ts > p.lastUsed) p.lastUsed = e.ts;
+
+    const parts = JST_HW.formatToParts(d);
+    const wd = WD[parts.find(x => x.type === 'weekday')?.value];
+    let hr = parseInt(parts.find(x => x.type === 'hour')?.value, 10);
+    if (hr === 24) hr = 0;
+    if (wd != null && hr >= 0 && hr < 24) heatmap[wd][hr]++;
+  }
+
+  // 直近 DAYS 日の連続した日付列(欠損日はゼロ埋め)を JST 基準で生成
+  const todayStr = JST_DATE.format(new Date());
+  const cursor = new Date(todayStr + 'T00:00:00Z');
+  const days = [];
+  for (let i = DAYS - 1; i >= 0; i--) {
+    const dd = new Date(cursor.getTime() - i * 86400000);
+    const key = dd.toISOString().slice(0, 10);
+    const rec = perDay[key];
+    days.push({ date: key, total: rec ? rec.total : 0, byId: rec ? rec.byId : {} });
+  }
+
+  res.json({
+    days,
+    perId,
+    heatmap,
+    totalEvents: events.length,
+    range: events.length
+      ? { from: events[0].ts, to: events[events.length - 1].ts }
+      : { from: null, to: null },
   });
 });
 

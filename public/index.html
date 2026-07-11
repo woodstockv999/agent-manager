@@ -112,48 +112,6 @@
     }
     .home-hero p  { font-size: var(--t-sm); color: var(--muted); margin-top: 8px; max-width: 58ch; line-height: 1.7; }
 
-    /* 結論ファースト: 主役スタット（最頻使用）を大きく、他3つは従属 */
-    .stats-wrap { margin-bottom: 30px; }
-    .stat-hero {
-      background:
-        radial-gradient(120% 140% at 100% 0%, rgba(212,160,48,.14), transparent 60%),
-        var(--card);
-      border: 1px solid var(--accent-b);
-      border-radius: 16px;
-      padding: 18px 20px;
-      margin-bottom: 10px;
-      position: relative; overflow: hidden;
-    }
-    .sh-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: var(--t-xs); font-weight: 500;
-      text-transform: uppercase; letter-spacing: .08em;
-      color: var(--accent); margin-bottom: 8px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .sh-name { font-size: var(--t-lg); font-weight: 700; letter-spacing: -.01em; }
-    .sh-count {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: var(--t-sm); color: var(--muted); margin-top: 2px;
-    }
-    .sh-count b { color: var(--accent); font-weight: 600; }
-    .sh-bar { height: 4px; border-radius: 99px; background: var(--border2); margin-top: 12px; overflow: hidden; }
-    .sh-bar > i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--yellow)); width: 0; transition: width .8s var(--ease-out); }
-
-    .stats-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .stat-chip {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 14px 16px;
-    }
-    .sc-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: var(--t-xs); font-weight: 500;
-      text-transform: uppercase; letter-spacing: .06em;
-      color: var(--dim); margin-bottom: 8px;
-    }
-    .sc-val { font-size: 1.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text); line-height: 1; }
-    .stat-chip.plugins .sc-val { color: var(--purple); }
-
     .section-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: var(--t-xs); font-weight: 500;
@@ -481,6 +439,106 @@
 
     .crumb, .btn-sm, .sp-btn, .section-card, .chip, .invoke-tag, .path-btn { touch-action: manipulation; }
 
+    /* ══════════ ダッシュボード ══════════ */
+    /* KPI */
+    .kpi-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 28px; }
+    .kpi {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 15px 17px; min-width: 0;
+    }
+    .kpi.hero {
+      background: radial-gradient(120% 140% at 100% 0%, rgba(212,160,48,.14), transparent 60%), var(--card);
+      border-color: var(--accent-b);
+    }
+    .k-lbl {
+      font-family: 'JetBrains Mono', monospace; font-size: var(--t-xs); font-weight: 500;
+      text-transform: uppercase; letter-spacing: .06em; color: var(--dim); margin-bottom: 8px;
+    }
+    .kpi.hero .k-lbl { color: var(--accent); }
+    .k-val { font-size: 1.7rem; font-weight: 700; line-height: 1; letter-spacing: -.01em; }
+    .kpi.hero .k-val { font-size: 2.4rem; color: var(--accent); }
+    .k-sub { font-size: var(--t-xs); color: var(--muted); margin-top: 7px; font-family: 'JetBrains Mono', monospace; line-height: 1.4; }
+    .k-delta { font-weight: 600; }
+    .k-delta.up { color: var(--green); } .k-delta.down { color: var(--coral); } .k-delta.flat { color: var(--dim); }
+
+    /* セクション見出し（ダッシュボード） */
+    .dash-section { margin-bottom: 26px; }
+    .dash-hd { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+    .dash-hd h2 { font-size: var(--t-lg); font-weight: 700; letter-spacing: -.015em; }
+    .dash-hd .sub { font-family: 'JetBrains Mono', monospace; font-size: var(--t-xs); color: var(--dim); margin-left: auto; }
+
+    .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px 16px 12px; }
+    .cc-title { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+    .cc-title .t { font-size: var(--t-md); font-weight: 600; }
+    .cc-title .s { font-family: 'JetBrains Mono', monospace; font-size: var(--t-xs); color: var(--dim); margin-left: auto; }
+
+    /* 日次バーチャート */
+    #daily-chart { min-height: 170px; }
+    .daily-svg { width: 100%; height: auto; display: block; touch-action: manipulation; }
+    .daily-svg .bar { fill: var(--accent); transition: opacity .16s var(--ease-out); }
+    .daily-svg .bar-zero { fill: var(--dim); opacity: .5; }
+    .daily-svg .hit { fill: transparent; cursor: pointer; }
+    .daily-svg .grid { stroke: var(--border2); stroke-width: 1; }
+    .daily-svg .axis-lbl { fill: var(--dim); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+    .day-brk { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 11px; }
+    .db-date {
+      font-family: 'JetBrains Mono', monospace; font-size: var(--t-sm); color: var(--text);
+      margin-bottom: 8px; display: flex; gap: 10px; align-items: baseline;
+    }
+    .db-date .tot { color: var(--accent); margin-left: auto; }
+    .db-row { display: flex; align-items: center; gap: 9px; font-size: var(--t-sm); padding: 3px 0; }
+    .db-row .dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .db-row .nm { color: var(--muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .db-row .ct { font-family: 'JetBrains Mono', monospace; color: var(--text); font-variant-numeric: tabular-nums; }
+    .db-empty { font-size: var(--t-sm); color: var(--dim); padding: 4px 0; }
+
+    /* ランキング */
+    .rank-row { padding: 10px 2px; border-bottom: 1px solid var(--border); }
+    .rank-row:last-child { border-bottom: none; }
+    .rr-line1 { display: flex; align-items: center; gap: 9px; }
+    .rr-rank { font-family: 'JetBrains Mono', monospace; font-size: var(--t-sm); color: var(--dim); min-width: 16px; }
+    .rr-cat-dot { width: 8px; height: 8px; border-radius: 99px; flex-shrink: 0; }
+    .rr-name { font-weight: 600; font-size: var(--t-sm); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rr-count { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--accent); font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
+    .rr-bar { height: 6px; border-radius: 99px; background: var(--border2); margin: 8px 0 6px; overflow: hidden; }
+    .rr-bar > i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--yellow)); }
+    .rr-line2 { display: flex; align-items: center; gap: 12px; font-size: var(--t-xs); color: var(--dim); font-family: 'JetBrains Mono', monospace; }
+    .trend.up { color: var(--green); } .trend.down { color: var(--coral); } .trend.flat { color: var(--dim); }
+
+    /* 面白いカット */
+    .cut-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+    /* ヒートマップ */
+    .heat-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding-bottom: 4px; }
+    .heat { display: inline-grid; grid-template-columns: 22px repeat(24, minmax(11px, 1fr)); gap: 3px; align-items: center; min-width: 100%; }
+    .hcell { height: 15px; border-radius: 3px; }
+    .hrow-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--dim); text-align: right; padding-right: 5px; }
+    .hcol-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--dim); text-align: center; height: 12px; line-height: 12px; }
+    .heat-legend { display: flex; align-items: center; gap: 7px; margin-top: 11px; font-size: var(--t-xs); color: var(--dim); font-family: 'JetBrains Mono', monospace; }
+    .heat-grad { display: inline-block; width: 72px; height: 8px; border-radius: 99px; background: linear-gradient(90deg, var(--border), rgba(212,160,48,.5), var(--accent)); }
+    .heat-legend .hl-max { margin-left: auto; }
+
+    /* カテゴリ別シェア */
+    .cs-bar { display: flex; height: 28px; border-radius: 8px; overflow: hidden; background: var(--surface); gap: 2px; }
+    .cs-seg { height: 100%; min-width: 4px; }
+    .cs-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 13px; }
+    .cs-leg { display: flex; align-items: center; gap: 7px; font-size: var(--t-sm); color: var(--muted); }
+    .cs-leg .sw { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .cs-leg b { color: var(--text); font-family: 'JetBrains Mono', monospace; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    /* クルー点呼 */
+    .roll-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .roll-chip {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 10px; padding: 8px 11px; font-size: var(--t-sm);
+    }
+    .roll-chip .rc-dot { width: 7px; height: 7px; border-radius: 99px; flex-shrink: 0; }
+    .roll-chip .rc-nm { font-weight: 600; }
+    .roll-chip .rc-since { color: var(--dim); font-family: 'JetBrains Mono', monospace; font-size: var(--t-xs); }
+    .roll-ok { display: flex; align-items: center; gap: 9px; color: var(--green); font-size: var(--t-sm); font-weight: 500; }
+
     @media (prefers-reduced-motion: reduce) {
       * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
       .agent-card.enter { opacity: 1; transform: none; }
@@ -490,12 +548,13 @@
       .main { padding: 22px 16px 60px; }
       .crumb-bar { padding: 8px 16px; padding-top: max(8px, env(safe-area-inset-top)); }
       .toolbar { top: 60px; }
-      .stats-mini { gap: 8px; }
       .ac-body { grid-template-columns: 1fr; gap: 12px; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .kpi.hero { grid-column: 1 / -1; }
+      .kpi.hero .k-val { font-size: 2.6rem; }
     }
     @media (max-width: 540px) {
-      .stat-chip { padding: 12px 12px; }
-      .sc-val { font-size: 1.25rem; }
+      .kpi .k-val { font-size: 1.5rem; }
       .sec-icon { width: 42px; height: 42px; font-size: 1.3rem; }
       .sec-count { display: none; }
       .ac-head { padding: 14px 14px; gap: 11px; }
@@ -531,30 +590,66 @@
         <p>このページは、Claude（AI）が使える「自動でこなせる作業（エージェント／プラグイン）」を、専門知識がなくても分かるようにまとめたものです。下のカードから見たい項目を選んでください。サーバー本体の稼働状況は BASE で見られます。</p>
       </div>
 
-      <div class="stats-wrap">
-        <div class="stat-hero" id="stat-hero">
-          <div class="sh-label">★ 最もよく使われているもの</div>
-          <div class="sh-name" id="s-top">—</div>
-          <div class="sh-count" id="s-top-sub"></div>
-          <div class="sh-bar"><i id="s-top-bar"></i></div>
+      <!-- KPI -->
+      <div class="kpi-grid">
+        <div class="kpi hero">
+          <div class="k-lbl">★ 累計スキル実行</div>
+          <div class="k-val" id="k-total"><span class="spin"></span></div>
+          <div class="k-sub" id="k-range">—</div>
         </div>
-        <div class="stats-mini">
-          <div class="stat-chip">
-            <div class="sc-label">エージェント</div>
-            <div class="sc-val" id="s-count"><span class="spin"></span></div>
+        <div class="kpi">
+          <div class="k-lbl">直近7日</div>
+          <div class="k-val" id="k-week">—</div>
+          <div class="k-sub" id="k-week-delta"></div>
+        </div>
+        <div class="kpi">
+          <div class="k-lbl">登録クルー</div>
+          <div class="k-val" id="k-crew">—</div>
+          <div class="k-sub" id="k-crew-sub"></div>
+        </div>
+        <div class="kpi">
+          <div class="k-lbl">休眠クルー</div>
+          <div class="k-val" id="k-dormant">—</div>
+          <div class="k-sub">30日以上未使用</div>
+        </div>
+      </div>
+
+      <!-- 日次実行数の推移 -->
+      <div class="dash-section">
+        <div class="chart-card">
+          <div class="cc-title"><span class="t">日次実行数の推移</span><span class="s">直近30日・タップで内訳</span></div>
+          <div id="daily-chart"><div class="placeholder"><div class="spin"></div></div></div>
+          <div class="day-brk" id="day-brk"></div>
+        </div>
+      </div>
+
+      <!-- クルー稼働ランキング -->
+      <div class="dash-section">
+        <div class="dash-hd"><h2>クルー稼働ランキング</h2><span class="sub" id="rank-sub"></span></div>
+        <div class="chart-card"><div id="rank-list"><div class="placeholder"><div class="spin"></div></div></div></div>
+      </div>
+
+      <!-- 面白いカット -->
+      <div class="dash-section">
+        <div class="dash-hd"><h2>面白いカット</h2><span class="sub">データが語る傾向</span></div>
+        <div class="cut-grid">
+          <div class="chart-card">
+            <div class="cc-title"><span class="t">いつ動く？ 曜日 × 時間帯</span><span class="s">JST</span></div>
+            <div id="heatmap"></div>
           </div>
-          <div class="stat-chip plugins">
-            <div class="sc-label">プラグイン</div>
-            <div class="sc-val" id="s-plugin-count">—</div>
+          <div class="chart-card">
+            <div class="cc-title"><span class="t">カテゴリ別シェア</span><span class="s">実行数の内訳</span></div>
+            <div id="cat-share"></div>
           </div>
-          <div class="stat-chip">
-            <div class="sc-label">累計実行</div>
-            <div class="sc-val" id="s-total">—</div>
+          <div class="chart-card">
+            <div class="cc-title"><span class="t">クルー点呼</span><span class="s">休眠中のメンバー</span></div>
+            <div id="roll-call"></div>
           </div>
         </div>
       </div>
 
-      <div class="section-label">メニュー</div>
+      <!-- 一覧メニュー -->
+      <div class="section-label">一覧を見る</div>
       <div class="section-grid" id="section-grid"></div>
     </div>
 
@@ -666,7 +761,7 @@ const browse = {
   plugins: { list: [], q: '', cat: LS.get('plugins.cat', 'all'), sort: LS.get('plugins.sort', 'exec'), first: true },
 };
 const openSkills = new Set(LS.get('openSkills', []));
-let statsLoaded = false;
+let dashLoaded = false;
 const loaded = { agents: false, plugins: false };
 
 function escapeHtml(s) {
@@ -720,7 +815,8 @@ function handleRoute() {
   (target || document.getElementById('view-home')).classList.add('active');
   renderCrumb(route);
   window.scrollTo(0, 0);
-  if (!statsLoaded) loadStats();
+  if (!dashLoaded) loadDashboard();
+  else if (!route && dashState.days.length) drawDaily(); // 幅0で描いた場合に備えホーム復帰時に再フィット
   if ((route === 'agents' || route === 'plugins') && !(loaded.agents && loaded.plugins)) loadAgentsAndPlugins();
 }
 window.addEventListener('hashchange', handleRoute);
@@ -737,36 +833,247 @@ document.getElementById('section-grid').innerHTML = SECTIONS.map(s => `
     <svg class="sec-chevron" width="7" height="12" viewBox="0 0 7 12" fill="none"><path d="M1 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>`).join('');
 
-async function loadStats() {
-  if (statsLoaded) return;
-  try {
-    const r = await fetch('api/stats');
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const d = await r.json();
-    document.getElementById('s-count').textContent        = d.agentCount;
-    document.getElementById('s-plugin-count').textContent = d.pluginCount;
-    document.getElementById('s-total').textContent        = d.totalExecutions;
-    document.getElementById('grid-count-agents').textContent  = d.agentCount + ' 件';
-    document.getElementById('grid-count-plugins').textContent = d.pluginCount + ' 件';
-    if (d.topAgent && d.topAgent.count > 0) {
-      document.getElementById('s-top').textContent     = d.topAgent.name;
-      document.getElementById('s-top-sub').innerHTML   = 'これまで <b>' + d.topAgent.count + '</b> 回 呼び出されました';
-      const pct = d.totalExecutions ? Math.max(6, Math.round(d.topAgent.count / d.totalExecutions * 100)) : 0;
-      requestAnimationFrame(() => { document.getElementById('s-top-bar').style.width = pct + '%'; });
+/* ══════════ ダッシュボード ══════════ */
+function catColor(k) { return (CAT[k] || DEFAULT_CAT).color; }
+const WD_JP = ['日','月','火','水','木','金','土'];
+
+function relTime(ts) {
+  if (!ts) return '未使用';
+  const diff = Date.now() - new Date(ts).getTime();
+  if (diff < 0) return 'たった今';
+  const d = Math.floor(diff / 86400000);
+  if (d < 1) { const h = Math.floor(diff / 3600000); if (h < 1) { const m = Math.floor(diff / 60000); return m < 1 ? 'たった今' : m + '分前'; } return h + '時間前'; }
+  if (d < 7)   return d + '日前';
+  if (d < 30)  return Math.floor(d / 7) + '週間前';
+  if (d < 365) return Math.floor(d / 30) + 'ヶ月前';
+  return Math.floor(d / 365) + '年前';
+}
+function fmtDateJP(iso) { const [, m, d] = iso.split('-'); return (+m) + '/' + (+d); }
+function daysSince(ts) { return ts ? Math.floor((Date.now() - new Date(ts).getTime()) / 86400000) : Infinity; }
+
+function niceMax(v) {
+  if (v <= 0) return 4;
+  const steps = [4, 5, 8, 10, 15, 20, 25, 30, 40, 50, 75, 100];
+  for (const s of steps) if (v <= s) return s;
+  return Math.ceil(v / 50) * 50;
+}
+/* 上辺のみ角丸・底辺は直角のバー（データの端だけ丸める） */
+function barPath(x, y, w, h, r) {
+  r = Math.min(r, w / 2, h);
+  return `M${x} ${(y + r).toFixed(1)} a${r} ${r} 0 0 1 ${r} ${-r} h${(w - 2 * r).toFixed(1)} a${r} ${r} 0 0 1 ${r} ${r} v${(h - r).toFixed(1)} h${-w} Z`;
+}
+
+const dashState = { days: [], meta: {}, sel: 0 };
+
+function renderDailyChart(days, W) {
+  const H = 170, padL = 30, padR = 10, padT = 12, padB = 26;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const maxV = days.reduce((m, d) => Math.max(m, d.total), 0);
+  const ny = niceMax(maxV);
+  const slot = plotW / days.length;
+  const bw = Math.max(4, Math.min(14, slot - 3));
+
+  const yOf = v => padT + plotH * (1 - v / ny);
+  let grid = '', ylab = '';
+  [0, ny / 2, ny].forEach(v => {
+    const y = yOf(v);
+    grid += `<line class="grid" x1="${padL}" y1="${y.toFixed(1)}" x2="${(W - padR).toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+    ylab += `<text class="axis-lbl" x="${padL - 6}" y="${(y + 4).toFixed(1)}" text-anchor="end">${v}</text>`;
+  });
+  let bars = '', hits = '', xlab = '';
+  days.forEach((d, i) => {
+    const cx = padL + i * slot + slot / 2;
+    if (d.total > 0) {
+      const h = plotH * (d.total / ny);
+      bars += `<path class="bar" data-idx="${i}" d="${barPath(cx - bw / 2, padT + plotH - h, bw, h, 3)}"><title>${fmtDateJP(d.date)} · ${d.total}回</title></path>`;
     } else {
-      document.getElementById('s-top').textContent = 'まだ実行なし';
-      document.getElementById('s-top-sub').textContent = '各エージェントを呼び出すとここに記録されます';
+      bars += `<circle class="bar-zero" cx="${cx.toFixed(1)}" cy="${(padT + plotH).toFixed(1)}" r="1.2"/>`;
     }
-    if (d.lastUpdated) {
-      const dt = new Date(d.lastUpdated);
+    hits += `<rect class="hit" data-idx="${i}" x="${(padL + i * slot).toFixed(1)}" y="${padT}" width="${slot.toFixed(1)}" height="${plotH}"/>`;
+    if (i % 5 === 0 || i === days.length - 1) {
+      xlab += `<text class="axis-lbl" x="${cx.toFixed(1)}" y="${H - 8}" text-anchor="middle">${fmtDateJP(d.date)}</text>`;
+    }
+  });
+  return `<svg class="daily-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="日次実行数の推移">${grid}${ylab}${bars}${xlab}${hits}</svg>`;
+}
+function drawDaily() {
+  const cont = document.getElementById('daily-chart');
+  const W = Math.max(300, Math.floor(cont.clientWidth) || 700);
+  cont.innerHTML = renderDailyChart(dashState.days, W);
+  selectDay(dashState.sel);
+}
+function selectDay(i) {
+  dashState.sel = i;
+  const svg = document.querySelector('#daily-chart .daily-svg');
+  if (svg) svg.querySelectorAll('.bar').forEach(b => { b.style.opacity = (+b.dataset.idx === i) ? '1' : '.32'; });
+  const d = dashState.days[i]; if (!d) return;
+  const brk = document.getElementById('day-brk');
+  const wd = WD_JP[new Date(d.date + 'T00:00:00Z').getUTCDay()];
+  const dateLbl = fmtDateJP(d.date) + '（' + wd + '）';
+  const entries = Object.entries(d.byId || {}).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) {
+    brk.innerHTML = `<div class="db-date">${dateLbl}</div><div class="db-empty">この日は実行がありませんでした</div>`;
+    return;
+  }
+  const rows = entries.map(([id, n]) => {
+    const m = dashState.meta[id];
+    const c = m ? catColor(m.category) : DEFAULT_CAT.color;
+    const nm = m ? m.name : id;
+    return `<div class="db-row"><span class="dot" style="background:${c}"></span><span class="nm">${escapeHtml(nm)}</span><span class="ct">${n}</span></div>`;
+  }).join('');
+  brk.innerHTML = `<div class="db-date">${dateLbl}<span class="tot">計 ${d.total} 回</span></div>${rows}`;
+}
+
+function renderKPI(ts) {
+  document.getElementById('k-total').textContent = ts.totalEvents;
+  if (ts.range && ts.range.from) {
+    document.getElementById('k-range').textContent = fmtDateJP(ts.range.from.slice(0, 10)) + ' 〜 ' + fmtDateJP(ts.range.to.slice(0, 10)) + ' の記録';
+  }
+  const days = ts.days;
+  const last7 = days.slice(-7).reduce((s, d) => s + d.total, 0);
+  const prev7 = days.slice(-14, -7).reduce((s, d) => s + d.total, 0);
+  document.getElementById('k-week').textContent = last7;
+  const wd = document.getElementById('k-week-delta');
+  if (last7 === 0 && prev7 === 0) { wd.textContent = '実行なし'; }
+  else {
+    const diff = last7 - prev7;
+    const cls = diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat';
+    const sym = diff > 0 ? '▲ +' : diff < 0 ? '▼ −' : '→ ';
+    wd.innerHTML = `<span class="k-delta ${cls}">${sym}${Math.abs(diff)}</span> 前7日比`;
+  }
+  const crewN = browse.agents.list.length, plugN = browse.plugins.list.length;
+  document.getElementById('k-crew').textContent = crewN + plugN;
+  document.getElementById('k-crew-sub').textContent = `エージェント${crewN}・プラグイン${plugN}`;
+  const dormant = browse.agents.list.filter(a => daysSince((ts.perId[a.id] || {}).lastUsed) >= 30).length;
+  document.getElementById('k-dormant').textContent = dormant;
+}
+
+function renderRanking(ts) {
+  const days = ts.days, last7 = days.slice(-7), prev7 = days.slice(-14, -7);
+  const sumId = (arr, id) => arr.reduce((s, d) => s + (d.byId[id] || 0), 0);
+  const known = Object.entries(ts.perId)
+    .filter(([id]) => dashState.meta[id])
+    .map(([id, v]) => ({ id, ...v }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 8);
+  const maxV = known.length ? known[0].total : 1;
+  const html = known.map((r, i) => {
+    const m = dashState.meta[r.id];
+    const l = sumId(last7, r.id), p = sumId(prev7, r.id);
+    let tc = 'flat', ta = '→', tt = '横ばい';
+    if (l > p) { tc = 'up'; ta = '▲'; tt = '+' + (l - p); }
+    else if (l < p) { tc = 'down'; ta = '▼'; tt = '−' + (p - l); }
+    const pct = Math.max(3, Math.round(r.total / maxV * 100));
+    return `<div class="rank-row">
+      <div class="rr-line1"><span class="rr-rank">${i + 1}</span><span class="rr-cat-dot" style="background:${catColor(m.category)}"></span><span class="rr-name">${escapeHtml(m.name)}</span><span class="rr-count">${r.total}</span></div>
+      <div class="rr-bar"><i style="width:${pct}%"></i></div>
+      <div class="rr-line2"><span class="trend ${tc}">${ta} ${tt}</span><span>最終 ${relTime(r.lastUsed)}</span></div>
+    </div>`;
+  }).join('');
+  document.getElementById('rank-list').innerHTML = html || '<div class="db-empty">まだ実行の記録がありません</div>';
+  document.getElementById('rank-sub').textContent = known.length ? 'TOP ' + known.length + '・ビルトイン除く' : '';
+}
+
+function renderHeatmap(ts) {
+  const hm = ts.heatmap;
+  const order = [1, 2, 3, 4, 5, 6, 0], names = ['月', '火', '水', '木', '金', '土', '日'];
+  let maxV = 0;
+  hm.forEach(row => row.forEach(v => { if (v > maxV) maxV = v; }));
+  let cells = '<div class="hcol-lbl"></div>';
+  for (let h = 0; h < 24; h++) cells += `<div class="hcol-lbl">${h % 6 === 0 ? h : ''}</div>`;
+  order.forEach((wd, ri) => {
+    cells += `<div class="hrow-lbl">${names[ri]}</div>`;
+    for (let h = 0; h < 24; h++) {
+      const v = hm[wd][h];
+      const o = (maxV && v) ? (0.15 + 0.85 * (v / maxV)) : 0;
+      const bg = v ? `rgba(212,160,48,${o.toFixed(2)})` : 'var(--border)';
+      cells += `<div class="hcell" style="background:${bg}" title="${names[ri]} ${h}時 · ${v}回"></div>`;
+    }
+  });
+  document.getElementById('heatmap').innerHTML =
+    `<div class="heat-wrap"><div class="heat">${cells}</div></div>` +
+    `<div class="heat-legend"><span>少</span><i class="heat-grad"></i><span>多</span><span class="hl-max">最多 ${maxV}回/コマ</span></div>`;
+}
+
+function renderCatShare(ts) {
+  const order = ['security', 'design', 'ops', 'dev'];
+  const tally = {}; let total = 0, other = 0;
+  for (const [id, v] of Object.entries(ts.perId)) {
+    const m = dashState.meta[id];
+    if (m && order.includes(m.category)) tally[m.category] = (tally[m.category] || 0) + v.total;
+    else other += v.total;
+    total += v.total;
+  }
+  const segs = [];
+  order.forEach(k => { if (tally[k]) segs.push({ label: CAT[k].jp, color: CAT[k].color, n: tally[k] }); });
+  if (other) segs.push({ label: 'ビルトイン等', color: DEFAULT_CAT.color, n: other });
+  const el = document.getElementById('cat-share');
+  if (!total) { el.innerHTML = '<div class="db-empty">まだ実行の記録がありません</div>'; return; }
+  const bar = segs.map(s => `<div class="cs-seg" style="flex:${s.n};background:${s.color}" title="${s.label} ${s.n}回"></div>`).join('');
+  const leg = segs.map(s => `<span class="cs-leg"><span class="sw" style="background:${s.color}"></span>${s.label} <b>${Math.round(s.n / total * 100)}%</b></span>`).join('');
+  el.innerHTML = `<div class="cs-bar">${bar}</div><div class="cs-legend">${leg}</div>`;
+}
+
+function renderRollCall(ts) {
+  const dormant = browse.agents.list
+    .map(a => ({ a, last: (ts.perId[a.id] || {}).lastUsed || null }))
+    .map(x => ({ ...x, d: daysSince(x.last) }))
+    .filter(x => x.d >= 30)
+    .sort((a, b) => b.d - a.d);
+  const el = document.getElementById('roll-call');
+  if (!dormant.length) { el.innerHTML = '<div class="roll-ok">✓ 全クルーが30日以内に稼働しています</div>'; return; }
+  el.innerHTML = '<div class="roll-list">' + dormant.map(({ a, last }) =>
+    `<span class="roll-chip"><span class="rc-dot" style="background:${catColor(a.category)}"></span><span class="rc-nm">${escapeHtml(a.name)}</span><span class="rc-since">${last ? '最終 ' + relTime(last) : '未使用'}</span></span>`
+  ).join('') + '</div>';
+}
+
+async function loadDashboard() {
+  if (dashLoaded) return;
+  try {
+    await loadAgentsAndPlugins();
+    const r = await fetch('api/timeseries');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const ts = await r.json();
+
+    const meta = {};
+    browse.agents.list.forEach(a => { meta[a.id] = { name: a.name, category: a.category, addedAt: a.addedAt }; });
+    browse.plugins.list.forEach(p => { meta[p.id] = { name: p.name, category: p.category, addedAt: p.addedAt }; });
+    dashState.meta = meta;
+    dashState.days = ts.days.slice(-30);
+    dashState.sel = dashState.days.reduce((pi, d, i, a) => d.total > a[pi].total ? i : pi, 0);
+
+    renderKPI(ts);
+    drawDaily();
+    renderRanking(ts);
+    renderHeatmap(ts);
+    renderCatShare(ts);
+    renderRollCall(ts);
+
+    document.getElementById('grid-count-agents').textContent  = browse.agents.list.length + ' 件';
+    document.getElementById('grid-count-plugins').textContent = browse.plugins.list.length + ' 件';
+    if (ts.range && ts.range.to) {
+      const dt = new Date(ts.range.to);
       document.getElementById('upd-txt').textContent =
-        '実行記録 ' + dt.toLocaleString('ja-JP', { timeZone:'Asia/Tokyo', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
+        '最終実行 ' + dt.toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     }
-    statsLoaded = true;
+    dashLoaded = true;
   } catch (e) {
-    document.getElementById('s-count').textContent = '!';
+    document.getElementById('k-total').textContent = '!';
+    document.getElementById('daily-chart').innerHTML = `<div class="db-empty">ダッシュボードの取得に失敗しました（${escapeHtml(e.message)}）</div>`;
   }
 }
+
+/* バーのタップ／リサイズ */
+document.getElementById('daily-chart').addEventListener('click', e => {
+  const t = e.target.closest('[data-idx]');
+  if (t) selectDay(+t.dataset.idx);
+});
+let dailyRz;
+window.addEventListener('resize', () => {
+  if (!dashState.days.length) return;
+  clearTimeout(dailyRz);
+  dailyRz = setTimeout(drawDaily, 180);
+});
 
 /* ── カード描画 ── */
 function abilityTags(list) { return (list || []).map(ab => `<span class="ability-tag">${escapeHtml(ab)}</span>`).join(''); }
@@ -996,6 +1303,7 @@ document.querySelectorAll('.info-toggle').forEach(btn => {
 
 /* ── データ取得 ── */
 async function loadAgentsAndPlugins() {
+  if (loaded.agents && loaded.plugins) return;
   try {
     const [ar, pr] = await Promise.all([fetch('api/agents'), fetch('api/plugins')]);
     if (!ar.ok)  throw new Error('agents: HTTP ' + ar.status);
