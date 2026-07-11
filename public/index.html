@@ -56,12 +56,14 @@
     a { color: inherit; }
     code { font-family: 'JetBrains Mono', monospace; }
 
+    :focus-visible { outline: 2px solid var(--accent-b); outline-offset: 2px; }
+
     /* ── 階層パンくず ── */
     .crumb-bar {
       position: sticky; top: 0; z-index: 20;
       display: flex; align-items: center; gap: 6px;
-      padding: 12px 24px;
-      padding-top: max(12px, env(safe-area-inset-top));
+      padding: 8px 24px;
+      padding-top: max(8px, env(safe-area-inset-top));
       background: color-mix(in srgb, var(--surface) 88%, transparent);
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
@@ -71,7 +73,7 @@
     .crumb {
       display: flex; align-items: center; gap: 6px;
       color: var(--muted); text-decoration: none;
-      padding: 6px 9px; border-radius: 7px; min-height: 32px;
+      padding: 6px 9px; border-radius: 7px; min-height: 44px;
       transition: background .16s var(--ease-out), color .16s var(--ease-out);
       background: none; border: none; font: inherit; cursor: pointer;
     }
@@ -227,7 +229,7 @@
 
     /* ── ツールバー（検索・絞り込み・並び替え） ── */
     .toolbar {
-      position: sticky; top: 56px; z-index: 15;
+      position: sticky; top: 60px; z-index: 15;
       background: color-mix(in srgb, var(--bg) 90%, transparent);
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       padding: 8px 0 10px; margin-bottom: 6px;
@@ -239,14 +241,15 @@
       background: var(--card); border: 1px solid var(--border2);
       border-radius: 11px; color: var(--text);
       font: inherit; font-size: var(--t-md);
-      padding: 0 42px 0 40px;
+      padding: 0 50px 0 40px;
       transition: border-color .16s var(--ease-out), box-shadow .16s var(--ease-out);
       -webkit-appearance: none;
     }
     .search::placeholder { color: var(--dim); }
     .search:focus { outline: none; border-color: var(--accent-b); box-shadow: 0 0 0 3px var(--accent-l); }
     .search-clear {
-      position: absolute; right: 8px; width: 30px; height: 30px;
+      position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+      width: 40px; height: 40px;
       display: none; align-items: center; justify-content: center;
       background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
       color: var(--muted); cursor: pointer; font-size: .8rem;
@@ -263,7 +266,7 @@
     .chips::-webkit-scrollbar { display: none; }
     .chip {
       display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
-      height: 34px; padding: 0 12px; border-radius: 99px;
+      height: 40px; padding: 0 12px; border-radius: 99px;
       background: var(--card); border: 1px solid var(--border2);
       color: var(--muted); font: inherit; font-size: var(--t-sm); cursor: pointer;
       flex-shrink: 0; -webkit-tap-highlight-color: transparent;
@@ -277,7 +280,7 @@
 
     .sort-wrap { position: relative; flex-shrink: 0; }
     .sort {
-      height: 34px; padding: 0 30px 0 12px; border-radius: 99px;
+      height: 44px; padding: 0 30px 0 12px; border-radius: 99px;
       background: var(--card); border: 1px solid var(--border2);
       color: var(--text); font: inherit; font-size: var(--t-sm);
       cursor: pointer; -webkit-appearance: none; appearance: none;
@@ -354,7 +357,7 @@
       border-top: 1px solid var(--border);
     }
     .path-btn {
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 6px; min-height: 40px;
       flex: 1; min-width: 0; font: inherit; text-align: left;
       background: none; border: none; cursor: pointer; padding: 4px 0;
       color: var(--dim); -webkit-tap-highlight-color: transparent;
@@ -367,9 +370,9 @@
     @media (hover: hover) { .path-btn:hover { color: var(--muted); } }
     .ac-foot-actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
     .invoke-tag {
-      font-family: 'JetBrains Mono', monospace; font-size: var(--t-sm); font-weight: 500;
+      font-family: 'JetBrains Mono', monospace; font-size: var(--t-sm); font-weight: 600;
       background: var(--accent-l); border: 1px solid var(--accent-b);
-      color: var(--accent); padding: 5px 11px; border-radius: 8px;
+      color: var(--accent); padding: 5px 11px; min-height: 40px; border-radius: 8px;
       white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent;
       display: inline-flex; align-items: center; gap: 6px;
       transition: background .14s var(--ease-out), transform .1s var(--ease-out);
@@ -379,16 +382,16 @@
     .invoke-tag.plugin { background: var(--purple-l); border-color: var(--purple-b); color: var(--purple); }
     @media (hover: hover) { .invoke-tag:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); } .invoke-tag.plugin:hover { background: color-mix(in srgb, var(--purple) 22%, transparent); } }
     .ref-link {
-      font-size: var(--t-xs); color: var(--muted); text-decoration: none;
-      display: inline-flex; align-items: center; gap: 5px;
+      font-size: var(--t-xs); font-weight: 500; color: var(--blue); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px; min-height: 40px;
       padding: 5px 10px; border-radius: 8px;
-      border: 1px solid var(--border2); background: var(--surface);
+      border: 1px solid rgba(80,144,232,.28); background: rgba(80,144,232,.08);
       -webkit-tap-highlight-color: transparent;
-      transition: border-color .14s var(--ease-out), color .14s var(--ease-out);
+      transition: border-color .14s var(--ease-out), background .14s var(--ease-out);
     }
-    @media (hover: hover) { .ref-link:hover { color: var(--text); border-color: var(--muted); } }
+    @media (hover: hover) { .ref-link:hover { background: rgba(80,144,232,.16); border-color: var(--blue); } }
     .btn-sm {
-      font-size: var(--t-sm); font-weight: 500; padding: 5px 11px; min-height: 34px;
+      font-size: var(--t-sm); font-weight: 500; padding: 5px 11px; min-height: 44px;
       border-radius: 8px; cursor: pointer;
       border: 1px solid var(--border2); background: var(--surface);
       color: var(--muted); font-family: inherit;
@@ -407,21 +410,21 @@
     .skill-panel.open { display: block; animation: panelIn .26s var(--ease-out) both; }
     @keyframes panelIn { from { opacity: 0; } to { opacity: 1; } }
     .skill-panel-head {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 18px; background: var(--surface);
+      display: flex; align-items: center; gap: 6px;
+      padding: 2px 10px; background: var(--surface);
       border-bottom: 1px solid var(--border);
     }
     .sp-path {
-      flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px;
+      flex: 1; min-width: 0; min-height: 44px; display: flex; align-items: center; gap: 6px;
       font: inherit; background: none; border: none; cursor: pointer;
-      color: var(--muted); text-align: left; padding: 2px 0;
+      color: var(--muted); text-align: left; padding: 2px 8px;
       -webkit-tap-highlight-color: transparent;
     }
     .sp-path .t { font-family: 'JetBrains Mono', monospace; font-size: var(--t-xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .sp-btn {
       background: none; border: none; color: var(--dim); cursor: pointer;
-      font-size: .82rem; padding: 4px 6px; line-height: 1; border-radius: 6px;
-      display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
+      font-size: .82rem; min-width: 44px; min-height: 44px; line-height: 1; border-radius: 6px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px; flex-shrink: 0;
       -webkit-tap-highlight-color: transparent; font-family: inherit;
     }
     @media (hover: hover) { .sp-btn:hover, .sp-path:hover { color: var(--text); } }
@@ -485,8 +488,8 @@
 
     @media (max-width: 800px) {
       .main { padding: 22px 16px 60px; }
-      .crumb-bar { padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top)); }
-      .toolbar { top: 52px; }
+      .crumb-bar { padding: 8px 16px; padding-top: max(8px, env(safe-area-inset-top)); }
+      .toolbar { top: 60px; }
       .stats-mini { gap: 8px; }
       .ac-body { grid-template-columns: 1fr; gap: 12px; }
     }
@@ -573,7 +576,7 @@
       <div class="toolbar">
         <div class="search-wrap" id="agents-sw">
           <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          <input class="search" id="agents-search" type="search" inputmode="search" autocomplete="off" placeholder="名前・役割・能力で検索…"/>
+          <input class="search" id="agents-search" type="search" inputmode="search" autocomplete="off" placeholder="名前・役割・能力で検索…" aria-label="エージェントを検索"/>
           <button class="search-clear" data-clear="agents" aria-label="検索をクリア">✕</button>
         </div>
         <div class="tb-row">
@@ -612,7 +615,7 @@
       <div class="toolbar">
         <div class="search-wrap" id="plugins-sw">
           <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          <input class="search" id="plugins-search" type="search" inputmode="search" autocomplete="off" placeholder="名前・役割・能力で検索…"/>
+          <input class="search" id="plugins-search" type="search" inputmode="search" autocomplete="off" placeholder="名前・役割・能力で検索…" aria-label="プラグインを検索"/>
           <button class="search-clear" data-clear="plugins" aria-label="検索をクリア">✕</button>
         </div>
         <div class="tb-row">
@@ -795,7 +798,7 @@ function renderCard(a, i) {
     <div><div class="ac-section-lbl">能力</div><div class="ability-tags">${abilityTags(a.abilities)}</div></div>
   </div>
   <div class="ac-foot">
-    <button class="path-btn" data-act="copy" data-copy="${escapeHtml(a.skillFile)}" title="タップでフルパスをコピー">
+    <button class="path-btn" data-act="copy" data-copy="${escapeHtml(a.skillFile)}" title="${escapeHtml(a.skillFile)}&#10;(タップでコピー)">
       <svg class="p-ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
       <span class="p-txt">${escapeHtml(shortPath)}</span>
     </button>
@@ -807,7 +810,7 @@ function renderCard(a, i) {
   </div>
   <div class="skill-panel${isOpen ? ' open' : ''}" id="skill-panel-${a.id}">
     <div class="skill-panel-head">
-      <button class="sp-path" data-act="copy" data-copy="${escapeHtml(a.skillFile)}" title="フルパスをコピー">
+      <button class="sp-path" data-act="copy" data-copy="${escapeHtml(a.skillFile)}" title="${escapeHtml(a.skillFile)}&#10;(タップでコピー)">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
         <span class="t">${escapeHtml(a.skillFile)}</span>
       </button>
@@ -842,7 +845,7 @@ function renderPluginCard(p, i) {
     <div><div class="ac-section-lbl">能力</div><div class="ability-tags">${abilityTags(p.abilities)}</div></div>
   </div>
   <div class="ac-foot">
-    <button class="path-btn" data-act="copy" data-copy="${escapeHtml(p.pluginId)}" title="タップでプラグインIDをコピー">
+    <button class="path-btn" data-act="copy" data-copy="${escapeHtml(p.pluginId)}" title="${escapeHtml(p.pluginId)}&#10;(タップでコピー)">
       <svg class="p-ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
       <span class="p-txt" style="color:var(--purple);opacity:.75">${escapeHtml(p.pluginId)}</span>
     </button>
@@ -920,14 +923,22 @@ function setQuery(kind, q) {
   applyFilter(kind);
 }
 
-/* ── スキルパネル ── */
+/* ── スキルパネル ──
+   カードリストは検索・絞り込みのたびに innerHTML ごと再生成されるため、
+   DOM 側の dataset.loaded だけではパネルを開いたまま入力するたびに
+   再フェッチが走ってしまう。取得済み本文は id ごとにメモリキャッシュする。 */
+const skillCache = new Map();
 async function loadSkill(id) {
   const content = document.getElementById('skill-content-' + id);
-  if (!content || content.dataset.loaded) return;
+  if (!content) return;
+  if (skillCache.has(id)) { content.textContent = skillCache.get(id); content.dataset.loaded = '1'; return; }
+  if (content.dataset.loaded) return;
   try {
     const r = await fetch('api/skill/' + id);
     if (!r.ok) throw new Error(r.status);
-    content.textContent = await r.text();
+    const text = await r.text();
+    skillCache.set(id, text);
+    content.textContent = text;
     content.dataset.loaded = '1';
   } catch { content.textContent = 'スキルファイルの読み込みに失敗しました。'; }
 }
