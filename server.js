@@ -6,7 +6,6 @@ const app = express();
 const PORT = 3010;
 
 const AGENTS_FILE  = path.join(__dirname, 'agents.json');
-const PLUGINS_FILE = path.join(__dirname, 'plugins.json');
 const COUNTS_FILE  = path.join(__dirname, 'execution-counts.json');
 const EXEC_FILE    = path.join(__dirname, 'executions.jsonl');
 
@@ -66,8 +65,7 @@ app.post('/api/track', (req, res) => {
   if (!agentId) return res.status(400).json({ error: 'agent query param required' });
 
   const agents = readJSON(AGENTS_FILE) || [];
-  const plugins = readJSON(PLUGINS_FILE) || [];
-  const known = agents.some(a => a.id === agentId) || plugins.some(p => p.id === agentId);
+  const known = agents.some(a => a.id === agentId);
   if (!known) return res.status(400).json({ error: 'unknown agent id' });
 
   withWriteLock(() => {
@@ -157,16 +155,6 @@ app.get('/api/timeseries', (req, res) => {
   });
 });
 
-app.get('/api/plugins', (req, res) => {
-  const plugins = readJSON(PLUGINS_FILE) || [];
-  const counts  = readJSON(COUNTS_FILE)  || {};
-  const result  = plugins.map(p => ({ ...p, executions: counts[p.id] || 0 }));
-  res.json({
-    plugins: result,
-    totalExecutions: result.reduce((s, p) => s + p.executions, 0),
-  });
-});
-
 app.get('/api/skill/:id', (req, res) => {
   const agents = readJSON(AGENTS_FILE) || [];
   const agent = agents.find(a => a.id === req.params.id);
@@ -182,18 +170,13 @@ app.get('/api/skill/:id', (req, res) => {
 
 app.get('/api/stats', (req, res) => {
   const agents  = readJSON(AGENTS_FILE)  || [];
-  const plugins = readJSON(PLUGINS_FILE) || [];
   const counts  = readJSON(COUNTS_FILE)  || {};
 
-  const all = [
-    ...agents.map(a  => ({ id: a.id,  name: a.name,  count: counts[a.id]  || 0 })),
-    ...plugins.map(p => ({ id: p.id,  name: p.name,  count: counts[p.id]  || 0 })),
-  ];
+  const all = agents.map(a => ({ id: a.id, name: a.name, count: counts[a.id] || 0 }));
   const top = [...all].sort((a, b) => b.count - a.count)[0] || null;
 
   res.json({
     agentCount:      agents.length,
-    pluginCount:     plugins.length,
     totalExecutions: all.reduce((s, x) => s + x.count, 0),
     topAgent: top,
     lastUpdated: counts.lastUpdated,
