@@ -57,25 +57,6 @@
     "gateExempt": true
   },
   {
-    "id": "distributed-task-orchestrator",
-    "name": "Distributed Task Orchestrator",
-    "role": "タスク分解・並列サブエージェント実行係",
-    "description": "複雑な依頼を独立したアトミックタスクに分解し、依存関係をマッピングして並列実行を管理・結果を集約する。claude-task-master相当の機能をSKILL.md形式で提供。",
-    "abilities": [
-      "タスク分解（依存関係マッピング・master_plan.md生成）",
-      "Agent単位でのタスク割り当て（agent_tasks/agent-XX.md生成）",
-      "シミュレーション実行（デフォルト）またはClaude CLIサブエージェント並列起動（CLIモード）",
-      "DAGベースのバッチスケジューリング・リトライ/エラーハンドリング",
-      "結果集約とfinal_output.md生成"
-    ],
-    "invoke": "/distributed-task-orchestrator",
-    "skillFile": "/home/w00dst0ck/agents/distributed-task-orchestrator/SKILL.md",
-    "reference": "https://github.com/xuzeyu91/ai-agent-toolkit",
-    "category": "dev",
-    "addedAt": "2026-07-01",
-    "gateExempt": false
-  },
-  {
     "id": "memory-dream",
     "name": "Memory Dream",
     "role": "記憶コンソリデーション係",
@@ -148,24 +129,6 @@
     "gateExempt": false
   },
   {
-    "id": "animation-vocabulary",
-    "name": "Animation Vocabulary",
-    "role": "アニメーション用語逆引き辞典",
-    "description": "曖昧なモーション表現の説明から正確なアニメーション用語を逆引きする用語集。「ポップオーバーが開くときのバウンドするやつ」→ Pop in のように、AIやデザイナーに指示するための正しい語彙を返す。",
-    "abilities": [
-      "曖昧な説明→正確なアニメーション用語の逆引き",
-      "エントランス/イージング/スプリング/ジェスチャー等のカテゴリ別用語集",
-      "AIプロンプトやデザイナー指示に使える語彙の提供",
-      "純粋な参照型（コード実行・外部通信なし）"
-    ],
-    "invoke": "/animation-vocabulary",
-    "skillFile": "/home/w00dst0ck/agents/animation-vocabulary/SKILL.md",
-    "reference": "https://github.com/emilkowalski/skills",
-    "category": "design",
-    "addedAt": "2026-07-10",
-    "gateExempt": false
-  },
-  {
     "id": "apple-design",
     "name": "Apple Design",
     "role": "Apple流UI・モーション設計指南",
@@ -196,24 +159,6 @@
     ],
     "invoke": "/emil-design-eng",
     "skillFile": "/home/w00dst0ck/agents/emil-design-eng/SKILL.md",
-    "reference": "https://github.com/emilkowalski/skills",
-    "category": "design",
-    "addedAt": "2026-07-10",
-    "gateExempt": false
-  },
-  {
-    "id": "review-animations",
-    "name": "Review Animations",
-    "role": "アニメーションコードレビュー官",
-    "description": "モーション/アニメーションコードをEmil Kowalskiの高い craft 基準でレビューする専用スキル。デフォルトはフラグ付け、承認は勝ち取るもの。10の非交渉スタンダードとBlock/Approve判定を出力する。",
-    "abilities": [
-      "10の非交渉スタンダード（STANDARDS.md）に基づく静的レビュー",
-      "所見テーブル＋段階的Block/Approve判定の出力",
-      "エスカレーショントリガーと修正ヒエラルキーの提示",
-      "モーションコード専用（機能追加・無関係バグ修正はしない）"
-    ],
-    "invoke": "/review-animations",
-    "skillFile": "/home/w00dst0ck/agents/review-animations/SKILL.md",
     "reference": "https://github.com/emilkowalski/skills",
     "category": "design",
     "addedAt": "2026-07-10",

@@ -1,7 +1,7 @@
 {
   "skill-gate": 11,
   "ui-agent": 20,
-  "lastUpdated": "2026-07-11T02:52:49.083Z",
+  "lastUpdated": "2026-07-16T18:33:50.973Z",
   "deploy": 3,
   "verify": 1,
   "update-config": 1,
@@ -10,7 +10,7 @@
   "distributed-task-orchestrator": 1,
   "claude-api": 1,
   "frontend-design": 3,
-  "crypto-market-search": 11,
-  "pre-trade-gate": 8,
+  "crypto-market-search": 14,
+  "pre-trade-gate": 21,
   "cbt-analyzer": 1
 }
